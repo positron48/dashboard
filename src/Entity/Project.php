@@ -20,9 +20,9 @@ class Project
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="integer")
      */
-    private $code;
+    private $externalId;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -61,14 +61,14 @@ class Project
         return $this->id;
     }
 
-    public function getCode(): ?string
+    public function getExternalId(): ?string
     {
-        return $this->code;
+        return $this->externalId;
     }
 
-    public function setCode(string $code): self
+    public function setExternalId(string $externalId): self
     {
-        $this->code = $code;
+        $this->externalId = $externalId;
 
         return $this;
     }

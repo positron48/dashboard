@@ -98,4 +98,9 @@ class User
 
         return $this;
     }
+
+    public function getGravatarHash()
+    {
+        return md5(strtolower($this->getUsername()));
+    }
 }
