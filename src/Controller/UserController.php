@@ -58,4 +58,29 @@ class UserController extends AbstractController
             'token' => $user->getApiKey(),
         ]);
     }
+
+    /**
+     * @Route("/api/user", name="user", methods="GET")
+     */
+    public function user()
+    {
+        $user = $this->getUser();
+
+        if($user === null) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Auth error'
+            ]);
+        }
+
+        return $this->json([
+            'success' => true,
+            'user' => [
+                'id' => $user->getId(),
+                'image' => 'https://www.gravatar.com/avatar/' . $user->getGravatarHash(),
+                'name' => $user->getUsername(),
+            ],
+            'token' => $user->getApiKey(),
+        ]);
+    }
 }
