@@ -2,10 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Project;
 use App\Entity\User;
+use App\Repository\ProjectRepository;
 use App\Repository\UserRepository;
+use App\Service\Redmine;
 use Doctrine\ORM\EntityManagerInterface;
-use Redmine\Client;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,36 +19,45 @@ class UserController extends AbstractController
      */
     public function auth(Request $request, EntityManagerInterface $entityManager)
     {
-        $url = $this->getParameter('redmine_url');
-
         // todo: refactor with DTO
         $username = $request->request->get('login');
         $password = $request->request->get('password');
 
-        // todo: move to service
-        $redmineClient = new Client($url, $username, $password);
-
-        $currentUser = $redmineClient->user->getCurrentUser();
-        if($currentUser === false){
+        $redmine = new Redmine($this->getParameter('redmine_url'), "", $username, $password);
+        try {
+            $currentUser = $redmine->getUser();
+        } catch (\Exception $e) {
             return $this->json([
                 'success' => false,
-                'message' => 'Auth error'
+                'message' => $e->getMessage()
             ]);
         }
 
-        $user = $entityManager->getRepository(User::class)->findOneBy(['username' => $username]); //todo: move to repository
+        //todo: move to repository
+        $user = $entityManager->getRepository(User::class)->findOneBy(['username' => $username]);
         if($user === null) {
             $user = new User();
-            $user->setUsername($currentUser['user']['login']);
+            $user->setUsername($currentUser['login']);
         }
 
-        $user->setApiKey($currentUser['user']['api_key']); // на всякий обновляем апи ключ
+        $user->setApiKey($currentUser['api_key']); // на всякий обновляем апи ключ
         $entityManager->persist($user);
         $entityManager->flush();
 
-        //todo: поиск проектов в системе, которые есть у пользователя и их привязка пользователю
-        $projects = array_column($currentUser['user']['memberships'], 'project');
-        $projectIds = array_column($projects, 'id');
+        $projects = $redmine->getUserProjects();
+        $projectIds = array_keys($projects);
+
+        /** @var ProjectRepository $repository */
+        $repository = $entityManager->getRepository(Project::class);
+        $existedProjects = $repository->findBy(['externalId' => $projectIds]); //todo: move to repository
+
+        $userProjects = [];
+        foreach ($existedProjects as $existedProject) {
+            $userProjects[] = [
+                'id' => $existedProject->getId(),
+                'name' => $existedProject->getName()
+            ];
+        }
 
         return $this->json([
             'success' => true,
@@ -54,6 +65,7 @@ class UserController extends AbstractController
                 'id' => $user->getId(),
                 'image' => 'https://www.gravatar.com/avatar/' . $user->getGravatarHash(),
                 'name' => $user->getUsername(),
+                'projects' => $userProjects
             ],
             'token' => $user->getApiKey(),
         ]);
@@ -62,15 +74,32 @@ class UserController extends AbstractController
     /**
      * @Route("/api/user", name="user", methods="GET")
      */
-    public function user()
+    public function user(EntityManagerInterface $entityManager)
     {
+        /** @var User $user */
         $user = $this->getUser();
 
-        if($user === null) {
+        $redmine = new Redmine($this->getParameter('redmine_url'), $user->getApiKey());
+        try {
+            $projects = $redmine->getUserProjects();
+        } catch (\Exception $e) {
             return $this->json([
                 'success' => false,
-                'message' => 'Auth error'
+                'message' => $e->getMessage()
             ]);
+        }
+        $projectIds = array_keys($projects);
+
+        /** @var ProjectRepository $repository */
+        $repository = $entityManager->getRepository(Project::class);
+        $existedProjects = $repository->findBy(['externalId' => $projectIds]); //todo: move to repository
+
+        $userProjects = [];
+        foreach ($existedProjects as $existedProject) {
+            $userProjects[] = [
+                'id' => $existedProject->getId(),
+                'name' => $existedProject->getName()
+            ];
         }
 
         return $this->json([
@@ -79,6 +108,7 @@ class UserController extends AbstractController
                 'id' => $user->getId(),
                 'image' => 'https://www.gravatar.com/avatar/' . $user->getGravatarHash(),
                 'name' => $user->getUsername(),
+                'projects' => $userProjects
             ],
             'token' => $user->getApiKey(),
         ]);
