@@ -40,6 +40,11 @@ class User implements UserInterface
      */
     private $roles = [];
 
+    /**
+     * @ORM\Column(type="array", nullable=true)
+     */
+    private $projects = [];
+
     public function __construct()
     {
         $this->mainProjects = new ArrayCollection();
@@ -152,5 +157,17 @@ class User implements UserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    public function getProjects(): ?array
+    {
+        return $this->projects;
+    }
+
+    public function setProjects(?array $projects): self
+    {
+        $this->projects = $projects;
+
+        return $this;
     }
 }

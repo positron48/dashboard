@@ -95,4 +95,42 @@ class ProjectController extends AbstractController
             'success' => true
         ]);
     }
+
+    /**
+     * @Route("/api/project/{id}", name="createProject", methods="GET")
+     */
+    public function getProject($id, EntityManagerInterface $entityManager)
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $userProjects = $user->getProjects();
+
+        /** @var Project $project */
+        $project = $entityManager->getRepository(Project::class)->findOneBy(['id' => $id]);
+        if($project === null || $userProjects === null || !in_array($project->getExternalId(), $userProjects)){
+            return $this->json([
+                'success' => false,
+                'message' => 'Project not found'
+            ]);
+        }
+
+        $testsData = [];
+        foreach ($project->getTests() as $test) {
+            $testsData[] = [
+                'id' => $test->getId(),
+                'name' => $test->getName(),
+                'comment' => $test->getComment(),
+                'script' => $test->getScriptUrl(),
+            ];
+        }
+
+        return $this->json([
+            'success' => true,
+            'project' => [
+                'id' => $project->getId(),
+                'name' => $project->getName(),
+                'tests' => $testsData
+            ]
+        ]);
+    }
 }

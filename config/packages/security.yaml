@@ -24,3 +24,4 @@ security:
         - { path: ^/api/user, roles: ROLE_USER }
         - { path: ^/api/project, roles: ROLE_USER }
         - { path: ^/api/projects, roles: ROLE_USER }
+        - { path: ^/api/test, roles: ROLE_USER }

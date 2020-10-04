@@ -41,11 +41,14 @@ class UserController extends AbstractController
         }
 
         $user->setApiKey($currentUser['api_key']); // на всякий обновляем апи ключ
-        $entityManager->persist($user);
-        $entityManager->flush();
 
         $projects = $redmine->getUserProjects();
         $projectIds = array_keys($projects);
+
+        $user->setProjects($projectIds);
+
+        $entityManager->persist($user);
+        $entityManager->flush();
 
         /** @var ProjectRepository $repository */
         $repository = $entityManager->getRepository(Project::class);
@@ -89,6 +92,10 @@ class UserController extends AbstractController
             ]);
         }
         $projectIds = array_keys($projects);
+
+        $user->setProjects($projectIds);
+        $entityManager->persist($user);
+        $entityManager->flush();
 
         /** @var ProjectRepository $repository */
         $repository = $entityManager->getRepository(Project::class);
