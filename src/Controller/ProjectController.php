@@ -54,14 +54,37 @@ class ProjectController extends AbstractController
         }
 
         // todo: refactor DTO
-        $externalId = $request->request->get('id');
-        $regexp = $request->request->get('regexp');
+        $data = $request->request->all();
+        $externalId = $data['externalId'];
+        $regexp = $data['regexp'];
 
         if(!isset($projectsFormatted[$externalId])){
             return $this->json([
                 'success' => false,
                 'message' => 'Project is not allowed'
             ]);
+        }
+
+        if(
+            $data['redmineUrl'] && $data['redmineUser'] && $data['redminePassword'] &&
+            $data['useDefaultRedmine'] !== 'true'
+        ) {
+            //todo: extract to service
+            $redmine = new \App\Service\Redmine(
+                $data['redmineUrl'],
+                "",
+                $data['redmineUser'],
+                $data['redminePassword']
+            );
+            try {
+                $currentUser = $redmine->getUser();
+                $data['redmineApiKey'] = $currentUser['api_key'];
+            } catch (\Exception $e) {
+                return $this->json([
+                    'success' => false,
+                    'message' => 'Ошибка авторизации в redmine: ' . $data['redmineUrl']
+                ]);
+            }
         }
 
         //todo: move to repository
@@ -78,8 +101,8 @@ class ProjectController extends AbstractController
 
             $redmine = new Redmine();
             $redmine
-                ->setUrl($this->getParameter('redmine_url'))
-                ->setApiKey($user->getApiKey())
+                ->setUrl(isset($data['redmineApiKey']) ? $data['redmineUrl'] : $this->getParameter('redmine_url'))
+                ->setApiKey(isset($data['redmineApiKey']) ? $data['redmineApiKey'] : $user->getApiKey())
                 ->setProject($project);
 
             $entityManager->persist($redmine);
@@ -115,12 +138,35 @@ class ProjectController extends AbstractController
             ]);
         }
 
+        /** @var Project $project */
         $project = $entityManager->getRepository(Project::class)->find($id);
         if($project === null){
             return $this->json([
                 'success' => false,
                 'message' => 'Project not found'
             ]);
+        }
+
+        if(
+            $data['redmineUrl'] && $data['redmineUser'] && $data['redminePassword'] &&
+            $data['useDefaultRedmine'] !== 'true'
+        ) {
+            //todo: extract to service
+            $redmine = new \App\Service\Redmine(
+                $data['redmineUrl'],
+                "",
+                $data['redmineUser'],
+                $data['redminePassword']
+            );
+            try {
+                $currentUser = $redmine->getUser();
+                $data['redmineApiKey'] = $currentUser['api_key'];
+            } catch (\Exception $e) {
+                return $this->json([
+                    'success' => false,
+                    'message' => 'Ошибка авторизации в redmine: ' . $data['redmineUrl']
+                ]);
+            }
         }
 
         $redmine = new \App\Service\Redmine($this->getParameter('redmine_url'), $user->getApiKey());
@@ -139,6 +185,23 @@ class ProjectController extends AbstractController
             ->setName($projectsFormatted[$data['externalId']]['text']);
 
         $entityManager->persist($project);
+
+        if(isset($data['redmineApiKey'])) {
+            $redmine = $project->getRedmines()[0];
+            $redmine
+                ->setUrl($data['redmineUrl'])
+                ->setApiKey($data['redmineApiKey']);
+
+            $entityManager->persist($redmine);
+        } elseif($data['useDefaultRedmine']) {
+            $redmine = $project->getRedmines()[0];
+            $redmine
+                ->setUrl($this->getParameter('redmine_url'))
+                ->setApiKey($user->getApiKey());
+
+            $entityManager->persist($redmine);
+        }
+
         $entityManager->flush();
 
         return $this->json([

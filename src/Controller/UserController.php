@@ -108,7 +108,9 @@ class UserController extends AbstractController
                 'name' => $existedProject->getName(),
                 'regexp' => $existedProject->getBranchRegexp(),
                 'externalId' => (int) $existedProject->getExternalId(),
-                'editable' => $existedProject->getMaintainer()->getId() === $user->getId()
+                'editable' => $existedProject->getMaintainer()->getId() === $user->getId(),
+                'useDefaultRedmine' => $existedProject->getRedmines()[0]->getUrl() === $this->getParameter('redmine_url'),
+                'redmineUrl' => $existedProject->getRedmines()[0]->getUrl()
             ];
         }
 
