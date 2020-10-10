@@ -6,6 +6,7 @@ use App\Entity\Project;
 use App\Entity\Test;
 use App\Entity\User;
 use App\Repository\TestRepository;
+use App\Service\Redmine;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpClient\CurlHttpClient;
@@ -140,6 +141,31 @@ class TestController extends AbstractController
                 'message' => 'curl error (' . $e->getCode() . '): ' . $e->getMessage()
             ]);
         }
+
+        $testData['redmineData'] = [];
+
+        $project = $test->getProject();
+        $regexp = $project->getBranchRegexp();
+        if(!empty($regexp)) {
+            preg_match('/' . $regexp . '/', $testData['branch'], $matches);
+            if(isset($matches[1])){
+                $redmine = $project->getRedmines()[0];
+                $redmineClient = new Redmine($redmine->getUrl(), $redmine->getApiKey());
+
+                $task = $redmineClient->getTask($matches[1]);
+                if(!empty($task)){
+                    $testData['redmineData'] = [
+                        'project' => $task['project']['name'],
+                        'status' => $task['status']['name'],
+                        'tracker' => $task['tracker']['name'],
+                        'assignedTo' => $task['assigned_to']['name'],
+                        'subject' => $task['subject'],
+                    ];
+                }
+            }
+        }
+
+
 
         return $this->json([
             'success' => true,

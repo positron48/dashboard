@@ -21,6 +21,15 @@ class Redmine
 
     /**
      * @return array
+     */
+    public function getTask($taskId)
+    {
+        $task = $this->client->issue->show($taskId);
+        return isset($task['issue']) ? $task['issue'] : null;
+    }
+
+    /**
+     * @return array
      * @throws \Exception
      */
     public function getUser()
