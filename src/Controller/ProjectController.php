@@ -92,6 +92,56 @@ class ProjectController extends AbstractController
         }
 
         return $this->json([
+            'success' => true,
+            'id' => $project->getId()
+        ]);
+    }
+
+    /**
+     * @Route("/api/project/{id}", name="editProject", methods="PATCH")
+     */
+    public function editProject($id, Request $request, EntityManagerInterface $entityManager)
+    {
+        $data = $request->request->all();
+
+        /** @var User $user */
+        $user = $this->getUser();
+        $userProjects = $user->getProjects();
+
+        if($userProjects === null || !in_array($data['externalId'], $userProjects)){
+            return $this->json([
+                'success' => false,
+                'message' => 'Project not found'
+            ]);
+        }
+
+        $project = $entityManager->getRepository(Project::class)->find($id);
+        if($project === null){
+            return $this->json([
+                'success' => false,
+                'message' => 'Project not found'
+            ]);
+        }
+
+        $redmine = new \App\Service\Redmine($this->getParameter('redmine_url'), $user->getApiKey());
+        try {
+            $projectsFormatted = $redmine->getUserProjects();
+        } catch (\Exception $e) {
+            return $this->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+        }
+
+        $project
+            ->setExternalId($data['externalId'])
+            ->setBranchRegexp($data['regexp'])
+            ->setName($projectsFormatted[$data['externalId']]['text']);
+
+        $entityManager->persist($project);
+        $entityManager->flush();
+
+        return $this->json([
             'success' => true
         ]);
     }
@@ -129,6 +179,8 @@ class ProjectController extends AbstractController
             'project' => [
                 'id' => $project->getId(),
                 'name' => $project->getName(),
+                'regexp' => $project->getBranchRegexp(),
+                'externalId' => $project->getExternalId(),
                 'tests' => $testsData
             ]
         ]);

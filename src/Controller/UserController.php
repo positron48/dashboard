@@ -105,7 +105,10 @@ class UserController extends AbstractController
         foreach ($existedProjects as $existedProject) {
             $userProjects[] = [
                 'id' => $existedProject->getId(),
-                'name' => $existedProject->getName()
+                'name' => $existedProject->getName(),
+                'regexp' => $existedProject->getBranchRegexp(),
+                'externalId' => (int) $existedProject->getExternalId(),
+                'editable' => $existedProject->getMaintainer()->getId() === $user->getId()
             ];
         }
 
