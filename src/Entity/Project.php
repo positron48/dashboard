@@ -41,12 +41,12 @@ class Project
     private $maintainer;
 
     /**
-     * @ORM\OneToMany(targetEntity=Redmine::class, mappedBy="project")
+     * @ORM\OneToMany(targetEntity=Redmine::class, mappedBy="project", orphanRemoval=true)
      */
     private $redmines;
 
     /**
-     * @ORM\OneToMany(targetEntity=Test::class, mappedBy="project")
+     * @ORM\OneToMany(targetEntity=Test::class, mappedBy="project", orphanRemoval=true)
      */
     private $tests;
 

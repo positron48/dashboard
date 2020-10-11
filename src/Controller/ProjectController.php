@@ -210,7 +210,40 @@ class ProjectController extends AbstractController
     }
 
     /**
-     * @Route("/api/project/{id}", name="createProject", methods="GET")
+     * @Route("/api/project/{id}", name="deleteProject", methods="DELETE")
+     */
+    public function deleteProject($id, EntityManagerInterface $entityManager)
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $userProjects = $user->getProjects();
+
+        /** @var Project $project */
+        $project = $entityManager->getRepository(Project::class)->find($id);
+        if($project === null){
+            return $this->json([
+                'success' => false,
+                'message' => 'Project not found'
+            ]);
+        }
+
+        if($userProjects === null || !in_array($project->getExternalId(), $userProjects)){
+            return $this->json([
+                'success' => false,
+                'message' => 'Project not found'
+            ]);
+        }
+
+        $entityManager->remove($project);
+        $entityManager->flush();
+
+        return $this->json([
+            'success' => true
+        ]);
+    }
+
+    /**
+     * @Route("/api/project/{id}", name="getProject", methods="GET")
      */
     public function getProject($id, EntityManagerInterface $entityManager)
     {

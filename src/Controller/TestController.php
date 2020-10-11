@@ -61,6 +61,7 @@ class TestController extends AbstractController
             'id' => $test->getId()
         ]);
     }
+
     /**
      * @Route("/api/test/{id}", name="editTest", methods="PATCH")
      */
@@ -112,6 +113,42 @@ class TestController extends AbstractController
     }
 
     /**
+     * @Route("/api/test/{id}", name="deleteTest", methods="DELETE")
+     */
+    public function deleteTest($id, EntityManagerInterface $entityManager)
+    {
+        /** @var TestRepository $testRepository */
+        $testRepository = $entityManager->getRepository(Test::class);
+        $test = $testRepository->find($id);
+        if($test === null){
+            return $this->json([
+                'success' => false,
+                'message' => 'Test not found'
+            ]);
+        }
+
+        /** @var User $user */
+        $user = $this->getUser();
+        $userProjects = $user->getProjects();
+
+        /** @var Project $project */
+        $project = $test->getProject();
+        if($userProjects === null || !in_array($project->getExternalId(), $userProjects)){
+            return $this->json([
+                'success' => false,
+                'message' => 'Project not found'
+            ]);
+        }
+
+        $entityManager->remove($test);
+        $entityManager->flush();
+
+        return $this->json([
+            'success' => true
+        ]);
+    }
+
+    /**
      * @Route("/api/test/{id}", name="getTest", methods="GET")
      */
     public function getTest($id, EntityManagerInterface $entityManager)
@@ -146,7 +183,8 @@ class TestController extends AbstractController
 
         $project = $test->getProject();
         $regexp = $project->getBranchRegexp();
-        if(!empty($regexp)) {
+
+        if(!empty($regexp) && isset($testData['branch'])) {
             preg_match('/' . $regexp . '/', $testData['branch'], $matches);
             if(isset($matches[1])){
                 $redmine = $project->getRedmines()[0];
@@ -164,8 +202,6 @@ class TestController extends AbstractController
                 }
             }
         }
-
-
 
         return $this->json([
             'success' => true,
