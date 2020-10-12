@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Project;
 use App\Entity\Test;
+use App\Entity\TestDomain;
 use App\Entity\User;
 use App\Repository\TestRepository;
 use App\Service\Redmine;
@@ -53,6 +54,28 @@ class TestController extends AbstractController
             ->setScriptUrl($data['script'])
             ->setComment($data['comment']);
 
+        if(!empty($data['links'])){
+            $domains = $test->getTestDomains();
+            foreach ($domains as $domain) {
+                if(isset($data['links'][$domain->getCode()])){
+                    if($domain->getDomain() !== $data['links'][$domain->getCode()]){
+                        $domain->setDomain($data['links'][$domain->getCode()]);
+                    }
+                    unset($data['links'][$domain->getCode()]);
+                } else {
+                    $test->removeTestDomain($domain);
+                }
+            }
+
+            foreach ($data['links'] as $code => $link) {
+                $domain = new TestDomain();
+                $domain
+                    ->setCode($code)
+                    ->setDomain($link)
+                    ->setTest($test);
+            }
+        }
+
         $entityManager->persist($test);
         $entityManager->flush();
 
@@ -97,6 +120,30 @@ class TestController extends AbstractController
                 'success' => false,
                 'message' => 'Name is required'
             ]);
+        }
+
+
+        if(!empty($data['links'])){
+            $domains = $test->getTestDomains();
+            foreach ($domains as $domain) {
+                if(isset($data['links'][$domain->getCode()])){
+                    if($domain->getDomain() !== $data['links'][$domain->getCode()]){
+                        $domain->setDomain($data['links'][$domain->getCode()]);
+                    }
+                    unset($data['links'][$domain->getCode()]);
+                } else {
+                    $test->removeTestDomain($domain);
+                }
+            }
+
+            foreach ($data['links'] as $code => $link) {
+                $domain = new TestDomain();
+                $domain
+                    ->setCode($code)
+                    ->setDomain($link)
+                    ->setTest($test);
+                $entityManager->persist($domain);
+            }
         }
 
         $test
@@ -179,6 +226,14 @@ class TestController extends AbstractController
             ]);
         }
 
+        $testData['links'] = [];
+        foreach ($test->getTestDomains() as $testDomain) {
+            $testData['links'][] = [
+                'title' => $testDomain->getCode(),
+                'link' => $testDomain->getDomain()
+            ];
+        }
+
         $testData['redmineData'] = [];
 
         $project = $test->getProject();
@@ -198,7 +253,7 @@ class TestController extends AbstractController
                         'tracker' => $task['tracker']['name'],
                         'assignedTo' => $task['assigned_to']['name'],
                         'subject' => $task['subject'],
-                        'link' => $redmine->getUrl() . '/issues/' . $task['id'],
+                        'link' => $redmine->getUrl() . '/issues/' . $task['id']
                     ];
                 }
             }

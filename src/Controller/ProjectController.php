@@ -262,11 +262,21 @@ class ProjectController extends AbstractController
 
         $testsData = [];
         foreach ($project->getTests() as $test) {
+
+            $links = [];
+            foreach ($test->getTestDomains() as $testDomain) {
+                $links[] = [
+                    'title' => $testDomain->getCode(),
+                    'link' => $testDomain->getDomain()
+                ];
+            }
+
             $testsData[] = [
                 'id' => $test->getId(),
                 'name' => $test->getName(),
                 'comment' => $test->getComment(),
                 'script' => $test->getScriptUrl(),
+                'links' => $links
             ];
         }
 
