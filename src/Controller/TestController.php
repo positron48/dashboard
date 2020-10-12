@@ -198,6 +198,7 @@ class TestController extends AbstractController
                         'tracker' => $task['tracker']['name'],
                         'assignedTo' => $task['assigned_to']['name'],
                         'subject' => $task['subject'],
+                        'link' => $redmine->getUrl() . '/issues/' . $task['id'],
                     ];
                 }
             }
