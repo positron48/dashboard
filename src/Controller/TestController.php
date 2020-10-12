@@ -151,7 +151,7 @@ class TestController extends AbstractController
     /**
      * @Route("/api/test/{id}", name="getTest", methods="GET")
      */
-    public function getTest($id, EntityManagerInterface $entityManager)
+    public function getTest($id, Request $request, EntityManagerInterface $entityManager)
     {
         /** @var TestRepository $testRepository */
         $testRepository = $entityManager->getRepository(Test::class);
@@ -168,7 +168,7 @@ class TestController extends AbstractController
         try {
             $response = $client->request('GET', $test->getScriptUrl(), [
                 'query' => [
-                    'type' => 'branch'
+                    'type' => $request->query->get('type') ? $request->query->get('type') : 'branch'
                 ]
             ]);
             $testData = json_decode($response->getContent(), true);
