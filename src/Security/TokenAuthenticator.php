@@ -59,7 +59,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
             'message' => 'User not found'
         ];
 
-        return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
+        return new JsonResponse($data, 200);
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $providerKey)
@@ -74,7 +74,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
             'message' => 'Authentication required'
         ];
 
-        return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
+        return new JsonResponse($data, 200);
     }
 
     public function supportsRememberMe()
