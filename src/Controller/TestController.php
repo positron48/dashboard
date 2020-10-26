@@ -248,10 +248,10 @@ class TestController extends AbstractController
                 $task = $redmineClient->getTask($matches[1]);
                 if(!empty($task)){
                     $testData['redmineData'] = [
-                        'project' => $task['project']['name'],
-                        'status' => $task['status']['name'],
-                        'tracker' => $task['tracker']['name'],
-                        'assignedTo' => $task['assigned_to']['name'],
+                        'project' => isset($task['project']) ? $task['project']['name'] : '',
+                        'status' => isset($task['status']) ? $task['status']['name'] : '',
+                        'tracker' => isset($task['tracker']) ? $task['tracker']['name'] : '',
+                        'assignedTo' => isset($task['assigned_to']) ? $task['assigned_to']['name'] : '',
                         'subject' => $task['subject'],
                         'link' => $redmine->getUrl() . '/issues/' . $task['id']
                     ];
