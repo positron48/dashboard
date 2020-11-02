@@ -4,66 +4,71 @@ require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_before.ph
 
 $host = COption::GetOptionString('intaro.retailcrm', 'api_host');
 
-$added = [];
-$modified = [];
-$untracked = [];
-$deleted = [];
-
-if($_REQUEST['type'] === 'branch'){
-
-    $cmd = "git rev-parse --abbrev-ref HEAD";
-    $ar = [];
-    exec($cmd, $ar);
-    $branch = $ar[0];
-    
-} else {
-
-    $cmd = "cd $path && git status -b -s";
-    $branch = '';
-    $diff = '';
-    $ar = [];
-
-    exec($cmd, $ar);
-
-    foreach ($ar as $i => $str) {
-        if (!$i) {
-            $branch = str_replace('## ', '', $str);
-            $branch = preg_replace('/\.\.\..+$/', '', $branch);
-        } else {
-            $diff .= "$str\n";
+switch ($_REQUEST['type']){
+    case 'branch':
+        $ar = [];
+        exec("git rev-parse --abbrev-ref HEAD", $ar);
+        $branch = $ar[0];
+        break;
+    case 'status':
+        exec("cd $path && git status -b -s", $ar);
+        foreach ($ar as $i => $str) {
+            if (!$i) {
+                $branch = str_replace('## ', '', $str);
+                $branch = preg_replace('/\.\.\..+$/', '', $branch);
+            } else {
+                $diff .= "$str\n";
+            }
         }
-    }
-
-    if (!empty($diff)) {
-	    preg_match_all('#M  (.*)#', $diff, $added);
-	    $added = $added[1];
-
-	    preg_match_all('# M (.*)#', $diff, $modified);
-	    $modified = $modified[1];
-
-	    preg_match_all('# D (.*)#', $diff, $deleted);
-	    $deleted = $deleted[1];
-
-	    preg_match_all('#\?\? (.*)#', $diff, $untracked);
-	    $untracked = $untracked[1];
-	}
+        break;
 }
 
-$status = [
+$result = [
     'branch' => $branch,
-    'diff' => [
+    'diff' => getDiff($diff),
+    'additional' => [
+        [
+            'title' => 'crm',
+            'type' => 'hint',
+            'hint' => $host,
+            'text' => getCrmNumber($host)
+        ]
+    ]
+];
+
+echo json_encode($result, JSON_UNESCAPED_UNICODE);
+
+function getDiff($diff)
+{
+    $added = [];
+    $modified = [];
+    $untracked = [];
+    $deleted = [];
+
+    if (!empty($diff)) {
+        preg_match_all('#M  (.*)#', $diff, $added);
+        $added = $added[1];
+
+        preg_match_all('# M (.*)#', $diff, $modified);
+        $modified = $modified[1];
+
+        preg_match_all('# D (.*)#', $diff, $deleted);
+        $deleted = $deleted[1];
+
+        preg_match_all('#\?\? (.*)#', $diff, $untracked);
+        $untracked = $untracked[1];
+    }
+
+    return [
         'added' => $added,
         'modified' => $modified,
         'untracked' => $untracked,
         'deleted' => $deleted
-    ],
-    'additional' => [
-    	'crm' => [
-    		'title' => 'crm',
-    		'show' => true,
-    		'value' => $host
-    	]
-    ]
-];
+    ];
+}
 
-echo json_encode($status, JSON_UNESCAPED_UNICODE);
+function getCrmNumber($host)
+{
+    preg_match('/^\D*(\d+)/', $host, $matches);
+    return isset($matches[1]) ? $matches[1] : '-';
+}
