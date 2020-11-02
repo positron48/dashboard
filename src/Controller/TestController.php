@@ -213,11 +213,16 @@ class TestController extends AbstractController
         $client = new CurlHttpClient();
 
         try {
-            $response = $client->request('GET', $test->getScriptUrl(), [
-                'query' => [
-                    'type' => $request->query->get('type') ? $request->query->get('type') : 'branch'
+            $response = $client->request(
+                'GET',
+                $test->getScriptUrl(),
+                [
+                    'query' => [
+                        'type' => $request->query->get('type') ? $request->query->get('type') : 'branch'
+                    ],
+                    'verify_host' => false
                 ]
-            ]);
+            );
             $testData = json_decode($response->getContent(), true);
         } catch (\Exception $e) {
             return $this->json([
