@@ -220,7 +220,7 @@ class TestController extends AbstractController
                     'query' => [
                         'type' => $request->query->get('type') ? $request->query->get('type') : 'branch'
                     ],
-                    'verify_host' => false
+                    'verify_peer' => false
                 ]
             );
             $testData = json_decode($response->getContent(), true);
