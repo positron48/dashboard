@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c57ee02e-9b63-454a-acca-8a7c6cd150a0" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Controller/TestController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/TestController.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -21,8 +22,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Controller/TestController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="319">
-              <caret line="218" column="17" lean-forward="true" selection-start-line="218" selection-start-column="17" selection-end-line="218" selection-end-column="17" />
+            <state relative-caret-position="302">
+              <caret line="136" selection-start-line="136" selection-end-line="136" />
               <folding>
                 <element signature="e#34#57#0#PHP" expanded="true" />
               </folding>
@@ -31,10 +32,17 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Entity/TestDomain.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-204" />
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/vendor/symfony/http-client/CurlHttpClient.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="562">
-              <caret line="130" column="60" selection-start-line="130" selection-start-column="49" selection-end-line="130" selection-end-column="60" />
+            <state relative-caret-position="1887">
+              <caret line="129" column="60" selection-start-line="129" selection-start-column="49" selection-end-line="129" selection-end-column="60" />
             </state>
           </provider>
         </entry>
@@ -95,6 +103,7 @@
       <find>class Logger {</find>
       <find>branch</find>
       <find>createProject</find>
+      <find>предзаказ не доступен</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -224,7 +233,7 @@
       <path value="$PROJECT_DIR$/vendor/kbsali/redmine-api" />
     </include_path>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="1433" />
     <option name="y" value="25" />
     <option name="width" value="1853" />
@@ -320,17 +329,19 @@
       <workItem from="1602524021418" duration="6968000" />
       <workItem from="1603396705149" duration="3002000" />
       <workItem from="1603718819557" duration="1342000" />
-      <workItem from="1604311467478" duration="825000" />
+      <workItem from="1604311467478" duration="1552000" />
+      <workItem from="1604942488168" duration="1061000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="58765000" />
+    <option name="totallyTimeSpent" value="60553000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1433" y="25" width="1853" height="1055" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.141932" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.141932" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -343,7 +354,7 @@
       <window_info anchor="bottom" id="Docker" order="7" />
       <window_info anchor="bottom" id="Database Changes" order="8" />
       <window_info anchor="bottom" id="Version Control" order="9" weight="0.32982087" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="10" visible="true" weight="0.3308746" />
+      <window_info anchor="bottom" id="Terminal" order="10" visible="true" weight="0.3308746" />
       <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -488,6 +499,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/example/status.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="11" column="14" lean-forward="true" selection-start-line="11" selection-start-column="14" selection-end-line="11" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/symfony/http-client/CurlHttpClient.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1887">
+          <caret line="129" column="60" selection-start-line="129" selection-start-column="49" selection-end-line="129" selection-end-column="60" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/Security/TokenAuthenticator.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="153">
@@ -518,6 +543,11 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/Entity/TestDomain.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-204" />
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/Entity/Test.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1853">
@@ -525,24 +555,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/example/status.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="11" column="14" lean-forward="true" selection-start-line="11" selection-start-column="14" selection-end-line="11" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/symfony/http-client/CurlHttpClient.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="562">
-          <caret line="130" column="60" selection-start-line="130" selection-start-column="49" selection-end-line="130" selection-end-column="60" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Controller/TestController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="319">
-          <caret line="218" column="17" lean-forward="true" selection-start-line="218" selection-start-column="17" selection-end-line="218" selection-end-column="17" />
+        <state relative-caret-position="302">
+          <caret line="136" selection-start-line="136" selection-end-line="136" />
           <folding>
             <element signature="e#34#57#0#PHP" expanded="true" />
           </folding>

@@ -133,6 +133,7 @@ class TestController extends AbstractController
                     unset($data['links'][$domain->getCode()]);
                 } else {
                     $test->removeTestDomain($domain);
+                    $entityManager->remove($domain);
                 }
             }
 
@@ -143,6 +144,7 @@ class TestController extends AbstractController
                     ->setDomain($link)
                     ->setTest($test);
                 $entityManager->persist($domain);
+                $test->addTestDomain($domain);
             }
         }
 
