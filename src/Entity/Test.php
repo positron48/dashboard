@@ -41,7 +41,7 @@ class Test
     private $project;
 
     /**
-     * @ORM\OneToMany(targetEntity=TestDomain::class, mappedBy="test")
+     * @ORM\OneToMany(targetEntity=TestDomain::class, mappedBy="test", orphanRemoval=true)
      */
     private $testDomains;
 
