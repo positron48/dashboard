@@ -55,24 +55,15 @@ class TestController extends AbstractController
             ->setComment($data['comment']);
 
         if(!empty($data['links'])){
-            $domains = $test->getTestDomains();
-            foreach ($domains as $domain) {
-                if(isset($data['links'][$domain->getCode()])){
-                    if($domain->getDomain() !== $data['links'][$domain->getCode()]){
-                        $domain->setDomain($data['links'][$domain->getCode()]);
-                    }
-                    unset($data['links'][$domain->getCode()]);
-                } else {
-                    $test->removeTestDomain($domain);
-                }
-            }
-
             foreach ($data['links'] as $code => $link) {
                 $domain = new TestDomain();
                 $domain
                     ->setCode($code)
                     ->setDomain($link)
                     ->setTest($test);
+
+                $entityManager->persist($domain);
+                $test->addTestDomain($domain);
             }
         }
 
