@@ -52,7 +52,8 @@ class TestController extends AbstractController
             ->setProject($project)
             ->setName($data['name'])
             ->setScriptUrl($data['script'])
-            ->setComment($data['comment']);
+            ->setComment($data['comment'])
+            ->setSort((int) $data['sort']);
 
         if(!empty($data['links'])){
             foreach ($data['links'] as $code => $link) {
@@ -142,7 +143,8 @@ class TestController extends AbstractController
         $test
             ->setName($data['name'])
             ->setScriptUrl($data['script'])
-            ->setComment($data['comment']);
+            ->setComment($data['comment'])
+            ->setSort((int) $data['sort']);
 
         $entityManager->persist($test);
         $entityManager->flush();

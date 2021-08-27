@@ -276,9 +276,17 @@ class ProjectController extends AbstractController
                 'name' => $test->getName(),
                 'comment' => $test->getComment(),
                 'script' => $test->getScriptUrl(),
+                'sort' => $test->getSort(),
                 'links' => $links
             ];
         }
+
+        usort($testsData, function($a, $b) {
+            if($a['sort'] != $b['sort']) {
+                return $a['sort'] > $b['sort'] ? 1 : -1;
+            }
+            return 0;
+        });
 
         return $this->json([
             'success' => true,
@@ -287,7 +295,7 @@ class ProjectController extends AbstractController
                 'name' => $project->getName(),
                 'regexp' => $project->getBranchRegexp(),
                 'externalId' => $project->getExternalId(),
-                'tests' => $testsData
+                'tests' => array_values($testsData)
             ]
         ]);
     }
