@@ -285,7 +285,7 @@ class ProjectController extends AbstractController
             if($a['sort'] != $b['sort']) {
                 return $a['sort'] > $b['sort'] ? 1 : -1;
             }
-            return 0;
+            return $a['id'] > $b['id'] ? 1 : -1;;
         });
 
         return $this->json([
