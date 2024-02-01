@@ -1,6 +1,18 @@
 <?
+
+use Symfony\Component\HttpFoundation\JsonResponse;
+
 $path = $_SERVER['DOCUMENT_ROOT'];
 require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_before.php");
+
+// check environment is dev
+if ($_ENV['APP_ENV'] !== 'dev') {
+    echo json_encode([
+        'status' => false,
+        'message' => 'This method is only available in dev environment',
+    ], JSON_UNESCAPED_UNICODE);
+    die();
+}
 
 $host = COption::GetOptionString('intaro.retailcrm', 'api_host');
 
@@ -37,6 +49,7 @@ $result = [
 ];
 
 echo json_encode($result, JSON_UNESCAPED_UNICODE);
+die();
 
 function getDiff($diff)
 {

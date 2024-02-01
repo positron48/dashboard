@@ -17,7 +17,7 @@ class DevController
         Request $request,
     ): Response {
         // check environment is dev
-        if ($_ENV['APP_ENV'] !== 'prod') {
+        if ($_ENV['APP_ENV'] !== 'dev') {
             return new JsonResponse([
                 'status' => false,
                 'message' => 'This method is only available in dev environment',
